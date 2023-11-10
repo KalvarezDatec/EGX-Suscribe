@@ -26,7 +26,7 @@ where T1.idcustomer=*/
     const entry = await strapi.db.connection.raw(`select T5.product[0]->>'nombre' descProd,
     T1.id idcus,T1.idcustomer,T1.firstname,T1.lastname,T1.correoelectronico,
     T3.id idcontrato,T3.inital_date,T3.end_date,T3.fechapago,
-    T7.title frecuencia
+    T7.title frecuencia,T7.descripcion
     from customers T1
     join contratoes_customer_links T2 on T1.id=T2.customer_id
     join contratoes T3 on T3.id=T2.contrato_id
