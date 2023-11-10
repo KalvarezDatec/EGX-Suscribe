@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "contratoes",
+  "info": {
+    "singularName": "contrato",
+    "pluralName": "contratoes",
+    "displayName": "Suscripciones",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "initalDate": {
+      "type": "date",
+      "required": true
+    },
+    "endDate": {
+      "type": "date"
+    },
+    "status": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::status.status"
+    },
+    "customer": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::customer.customer"
+    },
+    "fechapago": {
+      "type": "date"
+    },
+    "suscription": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::suscription.suscription"
+    }
+  }
+}

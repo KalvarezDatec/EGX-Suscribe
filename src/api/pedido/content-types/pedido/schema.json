@@ -1,0 +1,23 @@
+{
+  "kind": "collectionType",
+  "collectionName": "pedidos",
+  "info": {
+    "singularName": "pedido",
+    "pluralName": "pedidos",
+    "displayName": "Pedido"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "idorder": {
+      "type": "biginteger"
+    },
+    "suscripcione": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::contrato.contrato"
+    }
+  }
+}
