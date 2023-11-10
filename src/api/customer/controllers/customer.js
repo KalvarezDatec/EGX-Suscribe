@@ -37,6 +37,9 @@ const validar = async (req) => {
   if (req.estado == undefined || req.estado == "") {
     msg = msg + "estado/";
   }
+  if (req.idfrecuencia == undefined || req.idfrecuencia == "") {
+    msg = msg + "idfrecuencia/";
+  }
   if (msg != "") {
     // console.log("msg", msg)
     return {
@@ -96,7 +99,7 @@ module.exports = createCoreController('api::customer.customer', ({ strapi }) => 
       if (validarok.status == 200) {
 
 
-        const { id, customer, lineitems, inicio, fechapago } = ctx.request.body
+        const { id, customer, lineitems, inicio, fechapago,idfrecuencia } = ctx.request.body
         let idCustomer = 0;
         let existe = await strapi.db.connection.raw(`Select * from customers where idcustomer=${customer.id}`);
         // console.log(existe.rowCount)
@@ -134,7 +137,8 @@ module.exports = createCoreController('api::customer.customer', ({ strapi }) => 
               status: 1,
               initalDate: inicio,
               pedido: fechapago,
-              publishedAt: new Date()
+              publishedAt: new Date(),
+              frecuencia: idfrecuencia
             }
             const entryContrato = await strapi.db.query("api::contrato.contrato").create({ data: dataContract });
             idContrato = entryContrato.id;
