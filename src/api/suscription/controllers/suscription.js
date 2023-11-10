@@ -35,8 +35,8 @@ module.exports = createCoreController('api::suscription.suscription', ({ strapi 
       }
     }
     return {
-      status: 404,
-      mensaje: "Ya se encuentra registrado la Suscripcion",
+      status: 409,
+      mensaje: "conflict: Ya se encuentra registrado la Suscripcion",
       data: ctx.request.body
     }
   },

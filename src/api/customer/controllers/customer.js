@@ -40,7 +40,7 @@ const validar = async (req) => {
   if (msg != "") {
     // console.log("msg", msg)
     return {
-      status: 404,
+      status: 406,
       mensaje: "datos erroneos en el payload son: " + msg + " llegaron vacios o sin nada",
       body: req
     }
@@ -154,19 +154,19 @@ module.exports = createCoreController('api::customer.customer', ({ strapi }) => 
             return {
               status: 200,
               mensaje: "se registro correctamente",
-              idPedidoStrapi: pedido.id,
+              idContrato: pedido.id,
               publishedAt: new Date()
             }
           }
           return {
-            status: 404,
-            mensaje: "Pedido repetido no se puede ingresar."
+            status: 409,
+            mensaje: "conflict: Pedido repetido no se puede ingresar."
           }
 
         } else {
           return {
             status: 404,
-            mensaje: "no existe el producto suscripto comunicarse con onbording"
+            mensaje: "Not found"
           }
         }
       } else {
