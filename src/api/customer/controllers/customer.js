@@ -157,7 +157,7 @@ module.exports = createCoreController('api::customer.customer', ({ strapi }) => 
             return {
               status: 200,
               mensaje: "se registro correctamente",
-              idContrato: pedidos.rows[0].contrato_id,
+              idContrato: idContrato,
               publishedAt: new Date()
             }
           }
