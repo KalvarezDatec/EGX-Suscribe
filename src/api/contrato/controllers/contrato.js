@@ -30,7 +30,7 @@ where T1.idcustomer=*/
     from customers T1
     join contratoes_customer_links T2 on T1.id=T2.customer_id
     join contratoes T3 on T3.id=T2.contrato_id
-    join contratoes_suscription_links T4 on T4.contrato_id=T2.id
+    join contratoes_suscription_links T4 on T4.contrato_id=T3.id
     join suscriptions T5 on T5.id=T4.suscription_id
     join contratoes_frecuencia_links T6 on T6.contrato_id=T3.id
     join frecuencias T7 on T7.id=T6.frecuencia_id
