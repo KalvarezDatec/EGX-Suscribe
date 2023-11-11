@@ -132,13 +132,15 @@ module.exports = createCoreController('api::customer.customer', ({ strapi }) => 
           // console.log("contrato", contrato.rows)
           if (contrato.rowCount == 0) {
             const dataContract = {
+              initalDate: fechacreacion,
+              fechapago: fechapago,
+              endDate: null,
               customer: idCustomer,
               suscription: suscription.rows[0].id,
               status: 1,
-              initalDate: fechacreacion,
-              fechapago: fechapago,
               frecuencia: idfrecuencia
             }
+            console.log(dataContract)
             const entryContrato = await strapi.db.query("api::contrato.contrato").create({ data: dataContract });
             idContrato = entryContrato.id;
           } else {
