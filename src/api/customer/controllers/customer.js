@@ -99,7 +99,7 @@ module.exports = createCoreController('api::customer.customer', ({ strapi }) => 
       if (validarok.status == 200) {
 
 
-        const { id, customer, lineitems, inicio, fechapago,idfrecuencia } = ctx.request.body
+        const { id, customer, lineitems, fechacreacion, fechapago,idfrecuencia } = ctx.request.body
         let idCustomer = 0;
         let existe = await strapi.db.connection.raw(`Select * from customers where idcustomer=${customer.id}`);
         // console.log(existe.rowCount)
@@ -135,9 +135,8 @@ module.exports = createCoreController('api::customer.customer', ({ strapi }) => 
               customer: idCustomer,
               suscription: suscription.rows[0].id,
               status: 1,
-              initalDate: inicio,
-              pedido: fechapago,
-              publishedAt: new Date(),
+              initalDate: fechacreacion,
+              fechapago: fechapago,
               frecuencia: idfrecuencia
             }
             const entryContrato = await strapi.db.query("api::contrato.contrato").create({ data: dataContract });
@@ -158,7 +157,7 @@ module.exports = createCoreController('api::customer.customer', ({ strapi }) => 
             return {
               status: 200,
               mensaje: "se registro correctamente",
-              idContrato: pedido.id,
+              idContrato: pedidos.rows[0].contrato_id,
               publishedAt: new Date()
             }
           }
