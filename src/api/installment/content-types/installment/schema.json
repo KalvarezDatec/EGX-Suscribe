@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "installments",
+  "info": {
+    "singularName": "installment",
+    "pluralName": "installments",
+    "displayName": "installment"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "idinstallment": {
+      "type": "integer",
+      "required": true
+    },
+    "amount": {
+      "type": "decimal"
+    },
+    "scheduledDate": {
+      "type": "datetime"
+    },
+    "suscripcione": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::contrato.contrato"
+    },
+    "pedido": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::pedido.pedido"
+    },
+    "status": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::status.status"
+    }
+  }
+}

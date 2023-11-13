@@ -482,6 +482,50 @@ export interface PluginUploadFolder extends Schema.CollectionType {
   };
 }
 
+export interface PluginI18NLocale extends Schema.CollectionType {
+  collectionName: 'i18n_locale';
+  info: {
+    singularName: 'locale';
+    pluralName: 'locales';
+    collectionName: 'locales';
+    displayName: 'Locale';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+  };
+  attributes: {
+    name: Attribute.String &
+      Attribute.SetMinMax<{
+        min: 1;
+        max: 50;
+      }>;
+    code: Attribute.String & Attribute.Unique;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'plugin::i18n.locale',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'plugin::i18n.locale',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface PluginUsersPermissionsPermission
   extends Schema.CollectionType {
   collectionName: 'up_permissions';
@@ -633,50 +677,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
-export interface PluginI18NLocale extends Schema.CollectionType {
-  collectionName: 'i18n_locale';
-  info: {
-    singularName: 'locale';
-    pluralName: 'locales';
-    collectionName: 'locales';
-    displayName: 'Locale';
-    description: '';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  pluginOptions: {
-    'content-manager': {
-      visible: false;
-    };
-    'content-type-builder': {
-      visible: false;
-    };
-  };
-  attributes: {
-    name: Attribute.String &
-      Attribute.SetMinMax<{
-        min: 1;
-        max: 50;
-      }>;
-    code: Attribute.String & Attribute.Unique;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'plugin::i18n.locale',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'plugin::i18n.locale',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface ApiContratoContrato extends Schema.CollectionType {
   collectionName: 'contratoes';
   info: {
@@ -707,6 +707,11 @@ export interface ApiContratoContrato extends Schema.CollectionType {
       'oneToOne',
       'api::suscription.suscription'
     >;
+    frecuencia: Attribute.Relation<
+      'api::contrato.contrato',
+      'oneToOne',
+      'api::frecuencia.frecuencia'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -731,18 +736,18 @@ export interface ApiCustomerCustomer extends Schema.CollectionType {
     singularName: 'customer';
     pluralName: 'customers';
     displayName: 'Customer';
+    description: '';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
-    idcustomer: Attribute.BigInteger & Attribute.Required;
+    idcustomer: Attribute.BigInteger & Attribute.Required & Attribute.Unique;
     firstname: Attribute.String & Attribute.Required;
     lastname: Attribute.String & Attribute.Required;
     correoelectronico: Attribute.Email & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
       'api::customer.customer',
       'oneToOne',
@@ -758,15 +763,95 @@ export interface ApiCustomerCustomer extends Schema.CollectionType {
   };
 }
 
+export interface ApiFrecuenciaFrecuencia extends Schema.CollectionType {
+  collectionName: 'frecuencias';
+  info: {
+    singularName: 'frecuencia';
+    pluralName: 'frecuencias';
+    displayName: 'Frecuencia';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    title: Attribute.String & Attribute.Required;
+    descripcion: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::frecuencia.frecuencia',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::frecuencia.frecuencia',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiInstallmentInstallment extends Schema.CollectionType {
+  collectionName: 'installments';
+  info: {
+    singularName: 'installment';
+    pluralName: 'installments';
+    displayName: 'installment';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    idinstallment: Attribute.Integer & Attribute.Required;
+    amount: Attribute.Decimal;
+    scheduledDate: Attribute.DateTime;
+    suscripcione: Attribute.Relation<
+      'api::installment.installment',
+      'oneToOne',
+      'api::contrato.contrato'
+    >;
+    pedido: Attribute.Relation<
+      'api::installment.installment',
+      'oneToOne',
+      'api::pedido.pedido'
+    >;
+    status: Attribute.Relation<
+      'api::installment.installment',
+      'oneToOne',
+      'api::status.status'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::installment.installment',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::installment.installment',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiPedidoPedido extends Schema.CollectionType {
   collectionName: 'pedidos';
   info: {
     singularName: 'pedido';
     pluralName: 'pedidos';
     displayName: 'Pedido';
+    description: '';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     idorder: Attribute.BigInteger;
@@ -777,7 +862,6 @@ export interface ApiPedidoPedido extends Schema.CollectionType {
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
       'api::pedido.pedido',
       'oneToOne',
@@ -799,15 +883,15 @@ export interface ApiStatusStatus extends Schema.CollectionType {
     singularName: 'status';
     pluralName: 'statuses';
     displayName: 'Status';
+    description: '';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     title: Attribute.String & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
       'api::status.status',
       'oneToOne',
@@ -828,11 +912,11 @@ export interface ApiSuscriptionSuscription extends Schema.CollectionType {
   info: {
     singularName: 'suscription';
     pluralName: 'suscriptions';
-    displayName: 'Planes_Suscription';
+    displayName: 'Planes';
     description: '';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     name: Attribute.String & Attribute.Required;
@@ -840,7 +924,6 @@ export interface ApiSuscriptionSuscription extends Schema.CollectionType {
     product: Attribute.JSON;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
       'api::suscription.suscription',
       'oneToOne',
@@ -868,12 +951,14 @@ declare module '@strapi/types' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
+      'plugin::i18n.locale': PluginI18NLocale;
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
-      'plugin::i18n.locale': PluginI18NLocale;
       'api::contrato.contrato': ApiContratoContrato;
       'api::customer.customer': ApiCustomerCustomer;
+      'api::frecuencia.frecuencia': ApiFrecuenciaFrecuencia;
+      'api::installment.installment': ApiInstallmentInstallment;
       'api::pedido.pedido': ApiPedidoPedido;
       'api::status.status': ApiStatusStatus;
       'api::suscription.suscription': ApiSuscriptionSuscription;

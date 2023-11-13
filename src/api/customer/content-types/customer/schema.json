@@ -4,16 +4,18 @@
   "info": {
     "singularName": "customer",
     "pluralName": "customers",
-    "displayName": "Customer"
+    "displayName": "Customer",
+    "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
     "idcustomer": {
       "type": "biginteger",
-      "required": true
+      "required": true,
+      "unique": true
     },
     "firstname": {
       "type": "string",

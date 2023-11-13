@@ -4,11 +4,11 @@
   "info": {
     "singularName": "suscription",
     "pluralName": "suscriptions",
-    "displayName": "Planes_Suscription",
+    "displayName": "Planes",
     "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
