@@ -11,6 +11,10 @@ module.exports={
     path:"/create-customerContract",
     handler:"customer.customerContract"
   },
-
+  {
+    method:"POST",
+    path:"/create-customerContract2",
+    handler:"customer.customerContract2"
+  },
 ]
 }

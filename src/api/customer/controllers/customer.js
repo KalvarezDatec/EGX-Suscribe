@@ -185,6 +185,101 @@ module.exports = createCoreController('api::customer.customer', ({ strapi }) => 
     }
 
     // return ctx.request.body;
+  },
+  async customerContract2(ctx) {
+    try {
+      console.log(ctx.request.body.draft_order.id)
+      const { customer, line_items } = ctx.request.body.draft_order;
+      const { id, fechacreacion, nroorden,idfrecuencia } = ctx.request.body
+      let idCustomer = 0;
+      let existe = await strapi.db.connection.raw(`Select * from customers where idcustomer=${customer.id}`);
+      // console.log(existe.rowCount)
+
+      //console.log(existe.rows)
+      if (existe.rowCount == 0) {
+        const dataCustomer = {
+          idcustomer: customer.id,
+          firstname: customer.first_name,
+          lastname: customer.last_name,
+          correoelectronico: customer.email
+        };
+        //   console.log("dataCustomer", dataCustomer)
+        const entryCustomer = await strapi.db.query("api::customer.customer").create({ data: dataCustomer });
+        idCustomer = entryCustomer.id;
+      } else {
+        idCustomer = existe.rows[0].id;
+      }
+      console.log("line_items", line_items[0])
+      const suscription = await strapi.db.connection.raw(`select * from suscriptions where product[0]->>'id'='${line_items[0].product_id}'
+      and  product[0]->>'idvariant'='${line_items[0].variant_id}'`)
+      console.log("suscription", suscription.rows[0])
+      if (suscription.rowCount !=0) {
+        console.log("idCustomer",idCustomer)
+        const contrato = await strapi.db.connection.raw(`select T1.* from contratoes T1
+        join contratoes_customer_links T2 on T1.id=T2.contrato_id
+        join contratoes_suscription_links T3 on T1.id=T3.contrato_id
+        join contratoes_status_links T4 on T1.id=T4.contrato_id
+        where T3.suscription_id=${suscription.rows[0].id} and T2.customer_id=${idCustomer}
+        `);
+        let idContrato = 0;
+         console.log("contrato", contrato.rows)
+        if (contrato.rowCount == 0) {
+          const fecha = new Date(fechacreacion);
+          const año = fecha.getFullYear();
+          const mes = fecha.getMonth() + 1;
+          const dia = fecha.getDate();
+          const fechaFormateada = `${año}-${mes < 10 ? '0' : ''}${mes}-${dia < 10 ? '0' : ''}${dia}`;
+          const dataContract = {
+            initalDate: fechaFormateada,
+            customer: idCustomer,
+            suscription: suscription.rows[0].id,
+            status: 2,
+           // frecuencia: idfrecuencia
+          }
+          console.log(dataContract)
+          const entryContrato = await strapi.db.query("api::contrato.contrato").create({ data: dataContract });
+          idContrato = entryContrato.id;
+        } else {
+          idContrato = contrato.rows[0].id
+        }
+        const pedidos = await strapi.db.connection.raw(`select * from pedidos T1
+        join pedidos_suscripcione_links T2 on T1.id=T2.pedido_id
+        where T1.idorder=${id} and T2.contrato_id=${idContrato}`);
+        console.log("pedido", pedidos)
+        if (pedidos.rowCount == 0) {
+          const dataPedido = {
+            idorder: id,
+            suscripcione: idContrato,
+            jsonordern: ctx.request.body.draft_order
+          }
+          const pedido = await strapi.db.query("api::pedido.pedido").create({ data: dataPedido });
+          return {
+            status: 200,
+            mensaje: "se registro correctamente",
+            idContrato: idContrato,
+            nroorden,
+            publishedAt: new Date()
+          }
+        }
+        return {
+          status: 409,
+          mensaje: "conflict: Pedido repetido no se puede ingresar."
+        }
+
+      } else {
+        return {
+          status: 404,
+          mensaje: "Not found"
+        }
+      }
+
+    } catch (error) {
+      return {
+        status: 404,
+        mensaje: error.message
+      }
+    }
+
   }
 
 }));
