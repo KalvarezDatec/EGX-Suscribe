@@ -234,7 +234,7 @@ module.exports = createCoreController('api::customer.customer', ({ strapi }) => 
             customer: idCustomer,
             suscription: suscription.rows[0].id,
             status: 2,
-           // frecuencia: idfrecuencia
+           frecuencia: idfrecuencia
           }
           console.log(dataContract)
           const entryContrato = await strapi.db.query("api::contrato.contrato").create({ data: dataContract });
@@ -250,6 +250,7 @@ module.exports = createCoreController('api::customer.customer', ({ strapi }) => 
           const dataPedido = {
             idorder: id,
             suscripcione: idContrato,
+            nroorden:nroorden,
             jsonordern: ctx.request.body.draft_order
           }
           const pedido = await strapi.db.query("api::pedido.pedido").create({ data: dataPedido });
@@ -257,7 +258,7 @@ module.exports = createCoreController('api::customer.customer', ({ strapi }) => 
             status: 200,
             mensaje: "se registro correctamente",
             idContrato: idContrato,
-            nroorden,
+
             publishedAt: new Date()
           }
         }

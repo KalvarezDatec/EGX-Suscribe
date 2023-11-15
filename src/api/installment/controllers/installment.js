@@ -38,7 +38,7 @@ module.exports = createCoreController('api::installment.installment', ({ strapi 
 
         return {
           status: 200,
-          idcontrato: pedido.rows[0].pedido_id
+          idcontrato: pedido.rows[0].contrato_id
         }
       } else {
         return {
@@ -57,7 +57,7 @@ module.exports = createCoreController('api::installment.installment', ({ strapi 
   async updateInstallment(ctx) {
     const { idpedido, installmentId } = ctx.request.body;
     let pedido = await strapi.db.connection.raw(`
-    Select T1.id,T1.idorder,T2.id idpedidocontrato,T2.pedido_id,T2.contrato_id
+    Select T1.id,T1.idorder,T2.id idpedidocontrato,T2.pedido_id,T2.contrato_id,T1.nroorden
      from pedidos T1
     join pedidos_suscripcione_links T2 on T1.id=T2.pedido_id
     where T1.idorder=${idpedido}`)
@@ -87,8 +87,8 @@ module.exports = createCoreController('api::installment.installment', ({ strapi 
         await strapi.db.connection.raw(`UPDATE contratoes_status_links set status_id=1 where contrato_id=${idcontrato}`);
         return {
           status: 200,
-          idpedido: 9716329172639721,
-          order_number: 1204
+          idpedido: idpedido,
+          order_number: pedido.rows[0].nroorden
         }
       }
       return {
