@@ -291,7 +291,7 @@ console.log("pedidoI",pedido.rows[0])
 
 const getPedido = async (idpedido) => {
   let pedido = await strapi.db.connection.raw(`
-  Select T1.id,T1.idorder,T2.id idpedidocontrato,T2.pedido_id,T2.contrato_id
+  Select T1.id,T1.idorder,T2.id idpedidocontrato,T2.pedido_id,T2.contrato_id,T1.nroorden
    from pedidos T1
   join pedidos_suscripcione_links T2 on T1.id=T2.pedido_id
   where T1.idorder=${idpedido}`)
