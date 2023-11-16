@@ -59,7 +59,7 @@ SELECT
     T7.title AS frecuencia,
     T7.descripcion,
     T9.title AS estado,
-    T3.fechapago AS sgtefecha,
+    T3.fechapago AS sgtefecha
 FROM
     customers T1
     JOIN contratoes_customer_links T2 ON T1.id = T2.customer_id
