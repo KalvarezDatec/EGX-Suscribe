@@ -159,8 +159,7 @@ module.exports = createCoreController('api::customer.customer', ({ strapi }) => 
             return {
               status: 200,
               mensaje: "se registro correctamente",
-              idContrato: idContrato,
-              publishedAt: new Date()
+              idContrato: idContrato
             }
           }
           return {
@@ -257,9 +256,7 @@ module.exports = createCoreController('api::customer.customer', ({ strapi }) => 
           return {
             status: 200,
             mensaje: "se registro correctamente",
-            idContrato: idContrato,
-
-            publishedAt: new Date()
+            idContrato: idContrato
           }
         }
         return {

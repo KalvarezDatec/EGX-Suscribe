@@ -262,17 +262,15 @@ module.exports = createCoreController('api::installment.installment', ({ strapi 
       const idpedido2 = response.data.id;
       await updatedPedidoInstallment(idpedido2,installmentId);
       return {
-        status: response.status,
-        data: {
-          idpedido2,
-          nroOrden:response.data.name
-        }
+        status:200,
+        idpedido2,
+        nroOrden:response.data.name
       }
 
     } else {
       return {
         status: 409,
-        data: { mensaje: "conflict" }
+       mensaje: "conflict"
       }
     }
   }
