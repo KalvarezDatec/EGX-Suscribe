@@ -42,7 +42,7 @@ where T1.idcustomer=*/
     // where T1.idcustomer=${id}`)
     const entry = await strapi.db.connection.raw(`
 
-select * from
+select T0.*,T1.total from
 (
 SELECT
     T5.product[0]->>'nombre' AS descProd,
@@ -60,7 +60,6 @@ SELECT
     T7.descripcion,
     T9.title AS estado,
     T3.fechapago AS sgtefecha,
-	0 as total
 FROM
     customers T1
     JOIN contratoes_customer_links T2 ON T1.id = T2.customer_id
@@ -92,21 +91,7 @@ WITH RankedOrders AS (
         T5.idcustomer = ${id}
 )
 SELECT
-	''  AS descProd,
-    ''  AS imagen,
-    0  AS idcus,
-    0  AS idcustomer,
-    ''  AS firstname,
-    ''  AS lastname,
-    ''  AS correoelectronico,
     contrato_id  AS idcontrato,
-    null  AS inital_date,
-    null  AS end_date,
-    null  AS fechapago,
-    ''  AS frecuencia,
-    ''  AS descripcion,
-    ''  AS estado,
-	null AS sgtefecha,
 	 total
 FROM
     RankedOrders
