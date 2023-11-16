@@ -263,8 +263,8 @@ module.exports = createCoreController('api::installment.installment', ({ strapi 
       await updatedPedidoInstallment(idpedido2,installmentId);
       return {
         status:200,
-        idpedido2,
-        nroOrden:response.data.name
+        idpedido:idpedido2,
+        order_number:response.data.name
       }
 
     } else {
