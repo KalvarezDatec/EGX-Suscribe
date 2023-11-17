@@ -232,7 +232,7 @@ module.exports = createCoreController('api::customer.customer', ({ strapi }) => 
             initalDate: fechaFormateada,
             customer: idCustomer,
             suscription: suscription.rows[0].id,
-            status: 2,
+            status: 1,
            frecuencia: idfrecuencia
           }
           console.log(dataContract)

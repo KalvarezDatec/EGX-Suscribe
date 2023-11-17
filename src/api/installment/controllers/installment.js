@@ -206,7 +206,7 @@ module.exports = createCoreController('api::installment.installment', ({ strapi 
             amount: installments[i].amount,
             scheduledDate: fecha.toISOString(),
             suscripcione: pedido.rows[0].contrato_id,
-            status: 2,
+            status: 6,
             pedido: (i == 0) ? pedido.rows[0].id : null
           }
           await strapi.db.query("api::installment.installment").create({ data: dataInstallment });
@@ -237,7 +237,7 @@ module.exports = createCoreController('api::installment.installment', ({ strapi 
       console.log(pedido.rows)
       const idcontrato = pedido.rows[0].contrato_id;
       let installment = await getInsatallment(idcontrato, installmentId);
-      await strapi.db.connection.raw(`UPDATE installments_status_links set status_id=1 where installment_id=${installment.rows[0].id}`);
+      await strapi.db.connection.raw(`UPDATE installments_status_links set status_id=7 where installment_id=${installment.rows[0].id}`);
       let installmentSgte = await getInsatallment(idcontrato, installmentId + 1);
       if (installmentSgte.rowCount != 0) {
         const fecha = new Date(installmentSgte.rows[0].fecha);
@@ -249,7 +249,7 @@ module.exports = createCoreController('api::installment.installment', ({ strapi 
       }
 
       if (installmentId == 1) {
-        await strapi.db.connection.raw(`UPDATE contratoes_status_links set status_id=1 where contrato_id=${idcontrato}`);
+        await strapi.db.connection.raw(`UPDATE contratoes_status_links set status_id=2 where contrato_id=${idcontrato}`);
         return {
           status: 200,
           idpedido: idpedido,
