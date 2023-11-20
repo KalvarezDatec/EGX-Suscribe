@@ -329,9 +329,9 @@ const crearPedidoStrapi = async (req, idcontrato) => {
 }
 
 const clonarPedido = async (req) => {
-  const urlShopify = "https://dmall-bolivia.myshopify.com/admin/api/2023-04/orders.json"
+  const urlShopify = "https://elgeniox-staging.myshopify.com/admin/api/2023-04/orders.json"
   const headers = {
-    "X-Shopify-Access-Token": "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",
+    "X-Shopify-Access-Token": "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",
     'Content-Type': 'application/json'
   }
   const jsonOrden = await devolverJsonOrder(req);
