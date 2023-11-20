@@ -36,6 +36,11 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::suscription.suscription"
+    },
+    "frecuencia": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::frecuencia.frecuencia"
     }
   }
 }
