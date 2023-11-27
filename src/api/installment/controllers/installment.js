@@ -209,6 +209,10 @@ module.exports = createCoreController('api::installment.installment', ({ strapi 
             status: 6,
             pedido: (i == 0) ? pedido.rows[0].id : null
           }
+          if (i == 0) {
+            const fechaFormateada = installments[i].scheduledDate.substring(0, 10);
+            await strapi.db.connection.raw(`UPDATE contratoes set fechapago='${fechaFormateada}' where id=${pedido.rows[0].contrato_id}`);
+          }
           await strapi.db.query("api::installment.installment").create({ data: dataInstallment });
         }
 
@@ -260,17 +264,17 @@ module.exports = createCoreController('api::installment.installment', ({ strapi 
       await crearPedidoStrapi(response, idcontrato);
 
       const idpedido2 = response.data.id;
-      await updatedPedidoInstallment(idpedido2,installmentId);
+      await updatedPedidoInstallment(idpedido2, installmentId);
       return {
-        status:200,
-        idpedido:idpedido2,
-        order_number:response.data.name
+        status: 200,
+        idpedido: idpedido2,
+        order_number: response.data.name
       }
 
     } else {
       return {
         status: 409,
-       mensaje: "conflict"
+        mensaje: "conflict"
       }
     }
   }
@@ -279,10 +283,10 @@ module.exports = createCoreController('api::installment.installment', ({ strapi 
 })
 );
 
-const updatedPedidoInstallment = async (idpedido,installmentId) => {
+const updatedPedidoInstallment = async (idpedido, installmentId) => {
   let pedido = await getPedido(idpedido)
   let insatallment = await getInsatallment(pedido.rows[0].contrato_id, installmentId);
-console.log("pedidoI",pedido.rows[0])
+  console.log("pedidoI", pedido.rows[0])
   await strapi.db.connection.raw(`
   INSERT INTO installments_pedido_links( installment_id,pedido_id)values (${insatallment.rows[0].id},${pedido.rows[0].pedido_id})`);
 }
@@ -296,7 +300,7 @@ const getPedido = async (idpedido) => {
   return pedido;
 }
 const getInsatallment = async (idcontrato, installmentId) => {
-  console.log("idcontrato",idcontrato)
+  console.log("idcontrato", idcontrato)
   const insatallment = await strapi.db.connection.raw(`
       select T0.id,T0.scheduled_date fecha from installments T0
       join installments_suscripcione_links T1 on T1.installment_id=T0.id
