@@ -15,12 +15,12 @@ module.exports = createCoreController('api::installment.installment', ({ strapi}
     const { idpedido, installments } = ctx.request.body;
 
     let pedido = await getPedido(idpedido);
-    if (pedido.rowCount != 0) {
+    // if (pedido.rowCount != 0) {
       let contrato = await strapi.db.connection.raw(`
       Select *
       from installments_suscripcione_links
       where contrato_id=${pedido.rows[0].contrato_id}`);
-      if (contrato.rowCount == 0) {
+      // if (contrato.rowCount == 0) {
         for (let i = 0; i < installments.length; i++) {
           const fecha = new Date(installments[i].scheduledDate);
           console.log(fecha.toISOString())
@@ -43,19 +43,19 @@ module.exports = createCoreController('api::installment.installment', ({ strapi}
           status: 200,
           idcontrato: pedido.rows[0].pedido_id
         }
-      } else {
-        return {
-          status: 404,
-          mensaje: "Installment repetidos no se puede ingresar."
-        }
-      }
+      // } else {
+      //   return {
+      //     status: 404,
+      //     mensaje: "Installment repetidos no se puede ingresar."
+      //   }
+      // }
 
-    } else {
-      return {
-        status: 409,
-        mensaje: "consfict: no existe ningun pedido y contrato"
-      }
-    }
+    // } else {
+    //   return {
+    //     status: 409,
+    //     mensaje: "consfict: no existe ningun pedido y contrato"
+    //   }
+    // }
   },
   async updateInstallment(ctx) {
     const { idpedido, installmentId } = ctx.request.body;
@@ -116,7 +116,7 @@ const updatedPedidoInstallment = async (idpedido, installmentId) => {
 
 const getPedido = async (idpedido) => {
   let pedido = await strapi.db.connection.raw(`
-  Select T1.id,T1.idorder,T2.id idpedidocontrato,T2.pedido_id,T2.contrato_id
+  Select T1.id,T1.idorder,T2.id idpedidocontrato,T2.pedido_id,T2.contrato_id,T1.nroorden
    from pedidos T1
   join pedidos_suscripcione_links T2 on T1.id=T2.pedido_id
   where T1.idorder=${idpedido}`)
