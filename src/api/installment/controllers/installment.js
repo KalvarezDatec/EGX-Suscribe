@@ -9,46 +9,46 @@ dotenv.config();
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
-module.exports = createCoreController('api::installment.installment', ({ strapi}) => ({
+module.exports = createCoreController('api::installment.installment', ({ strapi }) => ({
 
   async createInstallment(ctx) {
     const { idpedido, installments } = ctx.request.body;
 
     let pedido = await getPedido(idpedido);
     // if (pedido.rowCount != 0) {
-      let contrato = await strapi.db.connection.raw(`
+    let contrato = await strapi.db.connection.raw(`
       Select *
       from installments_suscripcione_links
       where contrato_id=${pedido.rows[0].contrato_id}`);
-      // if (contrato.rowCount == 0) {
-        for (let i = 0; i < installments.length; i++) {
-          const fecha = new Date(installments[i].scheduledDate);
-          console.log(fecha.toISOString())
-          const dataInstallment = {
-            idinstallment: installments[i].id,
-            amount: installments[i].amount,
-            scheduledDate: fecha.toISOString(),
-            suscripcione: pedido.rows[0].contrato_id,
-            status: 6,
-            pedido: (i == 0) ? pedido.rows[0].id : null
-          }
-          if (i == 0) {
-            const fechaFormateada = installments[i].scheduledDate.substring(0, 10);
-            await strapi.db.connection.raw(`UPDATE contratoes set fechapago='${fechaFormateada}' where id=${pedido.rows[0].contrato_id}`);
-          }
-          await strapi.db.query("api::installment.installment").create({ data: dataInstallment });
-        }
+    // if (contrato.rowCount == 0) {
+    for (let i = 0; i < installments.length; i++) {
+      const fecha = new Date(installments[i].scheduledDate);
+      console.log(fecha.toISOString())
+      const dataInstallment = {
+        idinstallment: installments[i].id,
+        amount: installments[i].amount,
+        scheduledDate: fecha.toISOString(),
+        suscripcione: pedido.rows[0].contrato_id,
+        status: 6,
+        pedido: (i == 0) ? pedido.rows[0].id : null
+      }
+      if (i == 0) {
+        const fechaFormateada = installments[i].scheduledDate.substring(0, 10);
+        await strapi.db.connection.raw(`UPDATE contratoes set fechapago='${fechaFormateada}' where id=${pedido.rows[0].contrato_id}`);
+      }
+      await strapi.db.query("api::installment.installment").create({ data: dataInstallment });
+    }
 
-        return {
-          status: 200,
-          idcontrato: pedido.rows[0].pedido_id
-        }
-      // } else {
-      //   return {
-      //     status: 404,
-      //     mensaje: "Installment repetidos no se puede ingresar."
-      //   }
-      // }
+    return {
+      status: 200,
+      idcontrato: pedido.rows[0].pedido_id
+    }
+    // } else {
+    //   return {
+    //     status: 404,
+    //     mensaje: "Installment repetidos no se puede ingresar."
+    //   }
+    // }
 
     // } else {
     //   return {
@@ -77,6 +77,8 @@ module.exports = createCoreController('api::installment.installment', ({ strapi}
 
       if (installmentId == 1) {
         await strapi.db.connection.raw(`UPDATE contratoes_status_links set status_id=2 where contrato_id=${idcontrato}`);
+        const orderPagada=paymentOrder(idpedido);
+        console.log(orderPagada)
         return {
           status: 200,
           idpedido: idpedido,
@@ -85,7 +87,8 @@ module.exports = createCoreController('api::installment.installment', ({ strapi}
       }
       const response = await clonarPedido(idpedido);
       await crearPedidoStrapi(response, idcontrato);
-
+      const orderPagada=paymentOrder(response.data.id)
+      console.log(orderPagada)
       const idpedido2 = response.data.id;
       await updatedPedidoInstallment(idpedido2, installmentId);
       return {
@@ -106,6 +109,39 @@ module.exports = createCoreController('api::installment.installment', ({ strapi}
 })
 );
 
+const paymentOrder = async (order) => {
+  const urlShopify = `${process.env.URL_STA}admin/api/2023-10/orders/${order}/transactions.json`
+  const headers = {
+    "X-Shopify-Access-Token": process.env.STA_EGX_TOKEN,
+    'Content-Type': 'application/json'
+  }
+
+  const data = {
+    "transaction": {
+      "kind": "capture",
+      "authorization": "authorization-key",
+      "gateway": "egXsubscribe"
+    }
+  }
+  try {
+    const resp = await axios({
+      method: 'POST',
+      headers: headers,
+      url: urlShopify,
+      data: data
+    });
+    return {
+      status: resp.data.status,
+      idTransaccion: resp.data.transaction.id
+    }
+  } catch (error) {
+    return {
+      status: 404,
+      msg: error.messagel
+    }
+  }
+
+}
 const updatedPedidoInstallment = async (idpedido, installmentId) => {
   let pedido = await getPedido(idpedido)
   let insatallment = await getInsatallment(pedido.rows[0].contrato_id, installmentId);
@@ -158,7 +194,7 @@ const crearPedidoStrapi = async (req, idcontrato) => {
 const clonarPedido = async (req) => {
   const urlShopify = `${process.env.URL_STA}admin/api/2023-04/orders.json`
   const headers = {
-    "X-Shopify-Access-Token":process.env.STA_EGX_TOKEN ,
+    "X-Shopify-Access-Token": process.env.STA_EGX_TOKEN,
     'Content-Type': 'application/json'
   }
   const jsonOrden = await devolverJsonOrder(req);
