@@ -77,8 +77,8 @@ module.exports = createCoreController('api::installment.installment', ({ strapi 
 
       if (installmentId == 1) {
         await strapi.db.connection.raw(`UPDATE contratoes_status_links set status_id=2 where contrato_id=${idcontrato}`);
-        const orderPagada=paymentOrder(idpedido);
-        console.log(orderPagada)
+        const orderPagada=await paymentOrder(idpedido);
+        console.log("orderPagada:",orderPagada)
         return {
           status: 200,
           idpedido: idpedido,
@@ -87,8 +87,8 @@ module.exports = createCoreController('api::installment.installment', ({ strapi 
       }
       const response = await clonarPedido(idpedido);
       await crearPedidoStrapi(response, idcontrato);
-      const orderPagada=paymentOrder(response.data.id)
-      console.log(orderPagada)
+      const orderPagada=await paymentOrder(response.data.id);
+      console.log("orderPagada:",orderPagada)
       const idpedido2 = response.data.id;
       await updatedPedidoInstallment(idpedido2, installmentId);
       return {
