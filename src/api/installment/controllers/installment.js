@@ -192,6 +192,7 @@ const crearPedidoStrapi = async (req, idcontrato) => {
 }
 
 const clonarPedido = async (req) => {
+  console.log("Token Shopify: ",process.env.STA_EGX_TOKEN)
   const urlShopify = `${process.env.URL_STA}admin/api/2023-04/orders.json`
   const headers = {
     "X-Shopify-Access-Token": process.env.STA_EGX_TOKEN,
