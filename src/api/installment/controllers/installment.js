@@ -124,12 +124,13 @@ const paymentOrder = async (order) => {
     }
   }
   try {
-    const resp = await axios({
-      method: 'POST',
-      headers: headers,
-      url: urlShopify,
-      data: data
-    });
+    // const resp = await axios({
+    //   method: 'POST',
+    //   url: urlShopify,
+    //   data: data,
+    //   headers: headers
+    // });
+    const resp = await axios.post(urlShopify, data, { headers })
     return {
       status: resp.data.status,
       idTransaccion: resp.data.transaction.id
