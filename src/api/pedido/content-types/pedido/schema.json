@@ -19,6 +19,12 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::contrato.contrato"
+    },
+    "jsonordern": {
+      "type": "json"
+    },
+    "nroorden": {
+      "type": "string"
     }
   }
 }

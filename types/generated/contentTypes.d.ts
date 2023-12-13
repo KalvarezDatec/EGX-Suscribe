@@ -860,6 +860,8 @@ export interface ApiPedidoPedido extends Schema.CollectionType {
       'oneToOne',
       'api::contrato.contrato'
     >;
+    jsonordern: Attribute.JSON;
+    nroorden: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
