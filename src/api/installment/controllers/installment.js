@@ -64,21 +64,24 @@ module.exports = createCoreController('api::installment.installment', ({ strapi 
       console.log(pedido.rows)
       const idcontrato = pedido.rows[0].contrato_id;
       let installment = await getInsatallment(idcontrato, installmentId);
-      await strapi.db.connection.raw(`UPDATE installments_status_links set status_id=7 where installment_id=${installment.rows[0].id}`);
+      // await strapi.db.connection.raw(`UPDATE installments_status_links set status_id=7 where installment_id=${installment.rows[0].id}`);
       let installmentSgte = await getInsatallment(idcontrato, installmentId + 1);
+      let fechaFormateada = "";
       if (installmentSgte.rowCount != 0) {
         const fecha = new Date(installmentSgte.rows[0].fecha);
         const año = fecha.getFullYear();
         const mes = fecha.getMonth() + 1;
         const dia = fecha.getDate();
-        const fechaFormateada = `${año}-${mes < 10 ? '0' : ''}${mes}-${dia < 10 ? '0' : ''}${dia}`;
-        await strapi.db.connection.raw(`UPDATE contratoes set fechapago='${fechaFormateada}' where id=${idcontrato}`);
+         fechaFormateada = `${año}-${mes < 10 ? '0' : ''}${mes}-${dia < 10 ? '0' : ''}${dia}`;
+        // await strapi.db.connection.raw(`UPDATE contratoes set fechapago='${fechaFormateada}' where id=${idcontrato}`);
       }
 
       if (installmentId == 1) {
+        await strapi.db.connection.raw(`UPDATE installments_status_links set status_id=7 where installment_id=${installment.rows[0].id}`);
+        await strapi.db.connection.raw(`UPDATE contratoes set fechapago='${fechaFormateada}' where id=${idcontrato}`);
         await strapi.db.connection.raw(`UPDATE contratoes_status_links set status_id=2 where contrato_id=${idcontrato}`);
-        const orderPagada=await paymentOrder(idpedido);
-        console.log("orderPagada:",orderPagada)
+        const orderPagada = await paymentOrder(idpedido);
+        console.log("orderPagada:", orderPagada)
         return {
           status: 200,
           idpedido: idpedido,
@@ -86,16 +89,27 @@ module.exports = createCoreController('api::installment.installment', ({ strapi 
         }
       }
       const response = await clonarPedido(idpedido);
-      await crearPedidoStrapi(response, idcontrato);
-      const orderPagada=await paymentOrder(response.data.id);
-      console.log("orderPagada:",orderPagada)
-      const idpedido2 = response.data.id;
-      await updatedPedidoInstallment(idpedido2, installmentId);
-      return {
-        status: 200,
-        idpedido: idpedido2,
-        order_number: response.data.name
+      if (response.status == 200) {
+        await strapi.db.connection.raw(`UPDATE installments_status_links set status_id=7 where installment_id=${installment.rows[0].id}`);
+        await strapi.db.connection.raw(`UPDATE contratoes set fechapago='${fechaFormateada}' where id=${idcontrato}`);
+
+        await crearPedidoStrapi(response, idcontrato);
+        const orderPagada = await paymentOrder(response.data.id);
+        console.log("orderPagada:", orderPagada)
+        const idpedido2 = response.data.id;
+        await updatedPedidoInstallment(idpedido2, installmentId);
+        return {
+          status: 200,
+          idpedido: idpedido2,
+          order_number: response.data.name
+        }
+      } else {
+        return {
+          status: response.status,
+          mensaje: response.data
+        }
       }
+
 
     } else {
       return {
@@ -138,7 +152,7 @@ const paymentOrder = async (order) => {
   } catch (error) {
     return {
       status: 404,
-      msg: error.messagel
+      msg: error.message
     }
   }
 
@@ -193,7 +207,7 @@ const crearPedidoStrapi = async (req, idcontrato) => {
 }
 
 const clonarPedido = async (req) => {
-  console.log("Token Shopify: ",process.env.STA_EGX_TOKEN)
+  console.log("Token Shopify: ", process.env.STA_EGX_TOKEN)
   const urlShopify = `${process.env.URL_STA}admin/api/2023-04/orders.json`
   const headers = {
     "X-Shopify-Access-Token": process.env.STA_EGX_TOKEN,
@@ -250,6 +264,9 @@ const devolverJsonOrder = async (req) => {
     // }
     // delete jsonOrder.customer
     // jsonOrder.customer = customer;
+    jsonOrder["order"]["inventory_behaviour"] = "decrenent_obeting_policy";
+    jsonOrder["order"]["send_receipt"] = "true";
+
     console.log("jsonOrder", jsonOrder)
     return {
       status: 200,
