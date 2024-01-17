@@ -15,7 +15,7 @@
     "idcustomer": {
       "type": "biginteger",
       "required": true,
-      "unique": true
+      "unique": false
     },
     "firstname": {
       "type": "string",

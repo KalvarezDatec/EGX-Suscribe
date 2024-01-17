@@ -742,7 +742,7 @@ export interface ApiCustomerCustomer extends Schema.CollectionType {
     draftAndPublish: false;
   };
   attributes: {
-    idcustomer: Attribute.BigInteger & Attribute.Required & Attribute.Unique;
+    idcustomer: Attribute.BigInteger & Attribute.Required;
     firstname: Attribute.String & Attribute.Required;
     lastname: Attribute.String & Attribute.Required;
     correoelectronico: Attribute.Email & Attribute.Required;

@@ -65,7 +65,7 @@ module.exports = createCoreController('api::installment.installment', ({ strapi 
       const idcontrato = pedido.rows[0].contrato_id;
       let installment = await getInsatallment(idcontrato, installmentId);
       // await strapi.db.connection.raw(`UPDATE installments_status_links set status_id=7 where installment_id=${installment.rows[0].id}`);
-      let installmentSgte = await getInsatallment(idcontrato, installmentId + 1);
+      let installmentSgte = await getInsatallment(idcontrato, Number(installmentId) + 1);
       let fechaFormateada = "";
       if (installmentSgte.rowCount != 0) {
         const fecha = new Date(installmentSgte.rows[0].fecha);
